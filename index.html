@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f4ee">
+  <meta name="description" content="Four animated peach screensavers for your peach-colored ride. Pick a mood, make it yours, and go fullscreen.">
+  <title>Peach Afterglow — A peach of a view.</title>
+  <link rel="icon" type="image/svg+xml" href="./peach.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="Peach Afterglow home"><img src="./peach.svg" width="34" height="34" alt=""><span>peach<span class="brand-divider">/</span><span class="brand-light">afterglow</span></span></a>
+      <span class="header-note"><span class="small-star">✳</span> A good place to do nothing.</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <div class="eyebrow"><span class="tiny-line"></span> THE SCREENSAVER COLLECTION</div>
+          <h1 id="page-title">A peach of a <em>view.</em></h1>
+          <p>Four little escapes for your peach-colored ride. Pick your kind of calm.</p>
+        </div>
+        <button class="primary-button" id="fullscreen-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg> Go fullscreen <span class="button-key">F</span></button>
+      </section>
+
+      <section class="player" aria-label="Screensaver preview and controls">
+        <div class="stage" id="stage" tabindex="0" aria-label="Animated peach screensaver. Press F for fullscreen or Space to pause.">
+          <canvas id="main-canvas" aria-label="Peach Rain animated preview"></canvas>
+          <div class="stage-top stage-hud">
+            <span class="scene-badge"><span id="scene-number">01</span><span class="badge-divider"></span><span id="scene-category">A LITTLE DRIZZLE</span></span>
+            <span class="live-badge"><span class="live-dot"></span><span id="live-label">LIVE PREVIEW</span></span>
+          </div>
+          <div class="stage-bottom stage-hud">
+            <div><h2 id="scene-name">Peach Rain</h2><p id="scene-description">Today's forecast: a soft shower of peaches.</p></div>
+            <button id="stage-expand" class="expand-button" aria-label="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button>
+          </div>
+          <div class="immersive-controls stage-hud" aria-label="Fullscreen controls">
+            <button id="previous-scene" aria-label="Previous screensaver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+            <button id="immersive-pause" aria-label="Pause animation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg></button>
+            <span id="immersive-name">Peach Rain</span>
+            <button id="next-scene" aria-label="Next screensaver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
+            <span class="immersive-divider"></span>
+            <label class="immersive-background" for="fullscreen-background"><span class="sr-only">Fullscreen background</span><select id="fullscreen-background" aria-label="Fullscreen background"><option value="midnight">Midnight</option><option value="cream">Cream</option><option value="blush">Blush</option><option value="peach">Peach</option></select><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m5 6 3 3 3-3"/></svg></label>
+            <span class="immersive-divider"></span>
+            <button id="exit-fullscreen" aria-label="Exit fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
+          </div>
+          <dialog id="exit-dialog" class="exit-dialog" aria-labelledby="exit-dialog-title" aria-describedby="exit-dialog-description">
+            <img src="./peach.svg" width="48" height="48" alt="">
+            <span class="dialog-eyebrow">BACK TO THE WORLD?</span>
+            <h2 id="exit-dialog-title">Leave your peach of mind?</h2>
+            <p id="exit-dialog-description">Exit fullscreen and return to the collection?</p>
+            <div class="dialog-actions"><button id="keep-watching" class="stay-button" autofocus>Keep watching</button><button id="confirm-exit" class="confirm-exit-button">Exit fullscreen <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></button></div>
+          </dialog>
+        </div>
+
+        <div class="control-bar">
+          <div class="background-control"><span class="control-label" id="backdrop-label">Backdrop</span><div class="background-options" role="group" aria-labelledby="backdrop-label"><button class="background-option selected" data-theme="midnight" aria-label="Midnight background" aria-pressed="true"><span class="background-dot" style="--swatch:#252725"></span>Midnight</button><button class="background-option" data-theme="cream" aria-label="Cream background" aria-pressed="false"><span class="background-dot" style="--swatch:#f1e7d4"></span>Cream</button><button class="background-option" data-theme="blush" aria-label="Blush background" aria-pressed="false"><span class="background-dot" style="--swatch:#edc1b2"></span>Blush</button><button class="background-option" data-theme="peach" aria-label="Peach background" aria-pressed="false"><span class="background-dot" style="--swatch:#f5b28b"></span>Peach</button></div></div>
+          <div class="slider-control"><label for="speed">Speed</label><input id="speed" type="range" min="0.25" max="2" step="0.05" value="0.75"><output for="speed" id="speed-value">0.75×</output></div>
+          <div class="slider-control density-control"><label for="density">Density</label><input id="density" type="range" min="0.2" max="1.5" step="0.05" value="0.7"><output for="density" id="density-value">Medium</output></div>
+          <button class="pause-button" id="pause-button" aria-label="Pause animation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><span id="pause-label">Pause</span></button>
+        </div>
+      </section>
+
+      <section class="collection" aria-labelledby="collection-title">
+        <div class="collection-heading"><h2 id="collection-title">Find your peach of mind.</h2><span>FOUR WAYS TO DRIFT</span></div>
+        <div class="scene-grid" role="group" aria-label="Choose a screensaver">
+          <button class="scene-card selected" data-scene="rain" aria-pressed="true"><div class="card-preview"><canvas data-preview="rain" aria-hidden="true"></canvas><span class="card-index">01</span><span class="card-tag">THE ORIGINAL</span></div><div class="card-info"><div><h3>Peach Rain</h3><p>A gentle downward drift.</p></div><span class="card-radio"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 10 3 3 7-7"/></svg></span></div></button>
+          <button class="scene-card" data-scene="spin" aria-pressed="false"><div class="card-preview"><canvas data-preview="spin" aria-hidden="true"></canvas><span class="card-index">02</span><span class="card-tag">SLOW & SWEET</span></div><div class="card-info"><div><h3>Slow Spin</h3><p>A peach with nowhere to be.</p></div><span class="card-radio"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 10 3 3 7-7"/></svg></span></div></button>
+          <button class="scene-card" data-scene="orbit" aria-pressed="false"><div class="card-preview"><canvas data-preview="orbit" aria-hidden="true"></canvas><span class="card-index">03</span><span class="card-tag">OUT OF THIS WORLD</span></div><div class="card-info"><div><h3>Peach Orbit</h3><p>Your own little peach universe.</p></div><span class="card-radio"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 10 3 3 7-7"/></svg></span></div></button>
+          <button class="scene-card" data-scene="float" aria-pressed="false"><div class="card-preview"><canvas data-preview="float" aria-hidden="true"></canvas><span class="card-index">04</span><span class="card-tag">ZERO GRAVITY</span></div><div class="card-info"><div><h3>Floating Peaches</h3><p>Light as a daydream.</p></div><span class="card-radio"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 10 3 3 7-7"/></svg></span></div></button>
+        </div>
+      </section>
+    </main>
+
+    <footer><span class="footer-signoff">Nothing to do. Just enjoy the view. <span>✳</span></span><div class="keyboard-hints"><span><kbd>1</kbd>–<kbd>4</kbd> switch scenes</span><span><kbd>space</kbd> pause</span><span><kbd>F</kbd> fullscreen</span></div></footer>
+  </div>
+  <div class="sr-only" role="status" id="announcement" aria-live="polite"></div>
+  <script src="./app.js"></script>
+</body>
+</html>

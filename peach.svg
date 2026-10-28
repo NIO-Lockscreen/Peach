@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
+ <defs>
+  <radialGradient id="body" cx=".34" cy=".26" r=".84"><stop stop-color="#ffce83"/><stop offset=".35" stop-color="#ffa477"/><stop offset=".7" stop-color="#f77c70"/><stop offset="1" stop-color="#e65d69"/></radialGradient>
+  <radialGradient id="cheek" cx=".18" cy=".2" r=".95"><stop stop-color="#ffd8a1"/><stop offset=".45" stop-color="#ffae85"/><stop offset="1" stop-color="#f47479"/></radialGradient>
+  <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b6d468"/><stop offset=".5" stop-color="#76b54a"/><stop offset="1" stop-color="#3b8d44"/></linearGradient>
+  <linearGradient id="seam" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#db6762" stop-opacity=".6"/><stop offset="1" stop-color="#e46c70" stop-opacity=".05"/></linearGradient>
+ </defs>
+ <path d="M75 46C72 33 74 23 81 18" fill="none" stroke="#947547" stroke-width="6" stroke-linecap="round"/>
+ <path d="M76 34C78 12 100 9 117 17 109 36 94 44 76 34Z" fill="url(#leaf)"/>
+ <path d="M79 33 106 21" stroke="#5c9840" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".7"/>
+ <path d="M72 45C51 25 24 33 17 55 7 85 31 111 64 130 70 134 74 134 80 130 112 114 137 87 128 59 120 35 92 28 72 45Z" fill="url(#body)"/>
+ <path d="M72 45C94 31 120 37 127 59 136 87 111 116 78 131 94 106 93 70 72 45Z" fill="url(#cheek)"/>
+ <path d="M72 46C86 63 89 83 81 109" fill="none" stroke="url(#seam)" stroke-width="3.8" stroke-linecap="round"/>
+ <path d="M30 57C34 46 44 42 52 44" fill="none" stroke="#ffe7b3" stroke-width="5" stroke-linecap="round" opacity=".4"/>
+</svg>
