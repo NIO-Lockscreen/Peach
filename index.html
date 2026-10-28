@@ -7,6 +7,7 @@
   <meta name="description" content="Four animated peach screensavers for your peach-colored ride. Pick a mood, make it yours, and go fullscreen.">
   <title>Peach Afterglow — A peach of a view.</title>
   <link rel="icon" type="image/svg+xml" href="./peach.svg">
+  <link rel="preload" href="./fonts/oswald-700.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -27,8 +28,9 @@
       </section>
 
       <section class="player" aria-label="Screensaver preview and controls">
-        <div class="stage" id="stage" tabindex="0" aria-label="Animated peach screensaver. Press F for fullscreen or Space to pause.">
+        <div class="stage" id="stage" tabindex="0" aria-label="Animated peach screensaver. Press F for fullscreen, Space to pause, or C to show or hide the clock.">
           <canvas id="main-canvas" aria-label="Peach Rain animated preview"></canvas>
+          <div class="clock" id="clock" role="img" aria-label="Clock" title="Drag to move. Pinch or scroll to resize."><span id="clock-hours">00</span><span id="clock-minutes">00</span></div>
           <div class="stage-top stage-hud">
             <span class="scene-badge"><span id="scene-number">01</span><span class="badge-divider"></span><span id="scene-category">A LITTLE DRIZZLE</span></span>
             <span class="live-badge"><span class="live-dot"></span><span id="live-label">LIVE PREVIEW</span></span>
@@ -43,6 +45,7 @@
             <span id="immersive-name">Peach Rain</span>
             <button id="next-scene" aria-label="Next screensaver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
             <span class="immersive-divider"></span>
+            <button id="immersive-clock" aria-label="Clock" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></button>
             <label class="immersive-background" for="fullscreen-background"><span class="sr-only">Fullscreen background</span><select id="fullscreen-background" aria-label="Fullscreen background"><option value="midnight">Midnight</option><option value="cream">Cream</option><option value="blush">Blush</option><option value="peach">Peach</option></select><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m5 6 3 3 3-3"/></svg></label>
             <span class="immersive-divider"></span>
             <button id="exit-fullscreen" aria-label="Exit fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
@@ -60,6 +63,7 @@
           <div class="background-control"><span class="control-label" id="backdrop-label">Backdrop</span><div class="background-options" role="group" aria-labelledby="backdrop-label"><button class="background-option selected" data-theme="midnight" aria-label="Midnight background" aria-pressed="true"><span class="background-dot" style="--swatch:#252725"></span>Midnight</button><button class="background-option" data-theme="cream" aria-label="Cream background" aria-pressed="false"><span class="background-dot" style="--swatch:#f1e7d4"></span>Cream</button><button class="background-option" data-theme="blush" aria-label="Blush background" aria-pressed="false"><span class="background-dot" style="--swatch:#edc1b2"></span>Blush</button><button class="background-option" data-theme="peach" aria-label="Peach background" aria-pressed="false"><span class="background-dot" style="--swatch:#f5b28b"></span>Peach</button></div></div>
           <div class="slider-control"><label for="speed">Speed</label><input id="speed" type="range" min="0.25" max="2" step="0.05" value="0.75"><output for="speed" id="speed-value">0.75×</output></div>
           <div class="slider-control density-control"><label for="density">Density</label><input id="density" type="range" min="0.2" max="1.5" step="0.05" value="0.7"><output for="density" id="density-value">Medium</output></div>
+          <div class="slider-control clock-control"><button class="clock-switch" id="clock-toggle" role="switch" aria-checked="true"><span class="switch-track"><span class="switch-knob"></span></span>Clock</button><input id="clock-size" type="range" min="0.5" max="3" step="0.05" value="1" aria-label="Clock size"><output for="clock-size" id="clock-size-value">100%</output></div>
           <button class="pause-button" id="pause-button" aria-label="Pause animation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><span id="pause-label">Pause</span></button>
         </div>
       </section>
@@ -75,7 +79,7 @@
       </section>
     </main>
 
-    <footer><span class="footer-signoff">Nothing to do. Just enjoy the view. <span>✳</span></span><div class="keyboard-hints"><span><kbd>1</kbd>–<kbd>4</kbd> switch scenes</span><span><kbd>space</kbd> pause</span><span><kbd>F</kbd> fullscreen</span></div></footer>
+    <footer><span class="footer-signoff">Nothing to do. Just enjoy the view. <span>✳</span></span><div class="keyboard-hints"><span><kbd>1</kbd>–<kbd>4</kbd> switch scenes</span><span><kbd>space</kbd> pause</span><span><kbd>C</kbd> clock</span><span><kbd>F</kbd> fullscreen</span></div></footer>
   </div>
   <div class="sr-only" role="status" id="announcement" aria-live="polite"></div>
   <script src="./app.js"></script>

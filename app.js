@@ -13,7 +13,8 @@
     blush: {name:'Blush',base:'#e9c0b3',glow:'#f6d6bf',dust:'151,87,72',ring:'161,99,76'},
     peach: {name:'Peach',base:'#f5b28b',glow:'#ffce9f',dust:'142,76,46',ring:'157,82,49'}
   };
-  let state = {scene:'rain',theme:'midnight',speed:0.75,density:0.7,paused:false};
+  const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
+  let state = {scene:'rain',theme:'midnight',speed:0.75,density:0.7,paused:false,clock:{on:true,scale:1,x:.5,y:.45}};
   try {
     const saved = JSON.parse(localStorage.getItem('peach-afterglow') || 'null');
     if (saved && typeof saved === 'object') {
@@ -21,9 +22,16 @@
       if (themes[saved.theme]) state.theme=saved.theme;
       if (Number.isFinite(saved.speed)) state.speed=Math.min(2,Math.max(.25,saved.speed));
       if (Number.isFinite(saved.density)) state.density=Math.min(1.5,Math.max(.2,saved.density));
+      const savedClock=saved.clock;
+      if (savedClock && typeof savedClock === 'object') {
+        if (typeof savedClock.on === 'boolean') state.clock.on=savedClock.on;
+        if (Number.isFinite(savedClock.scale)) state.clock.scale=clamp(savedClock.scale,.5,3);
+        if (Number.isFinite(savedClock.x)) state.clock.x=clamp(savedClock.x,0,1);
+        if (Number.isFinite(savedClock.y)) state.clock.y=clamp(savedClock.y,0,1);
+      }
     }
   } catch (_) {}
-  const save = () => {try {localStorage.setItem('peach-afterglow',JSON.stringify({scene:state.scene,theme:state.theme,speed:state.speed,density:state.density}));}catch (_) {}};
+  const save = () => {try {localStorage.setItem('peach-afterglow',JSON.stringify({scene:state.scene,theme:state.theme,speed:state.speed,density:state.density,clock:state.clock}));}catch (_) {}};
   const stage=$('stage');
   const peach = new Image();
   peach.src='./peach.svg';
@@ -182,12 +190,91 @@
   function updateSlider(id,value) {
     const input=$(id);input.value=value;
     input.style.setProperty('--fill',`${(value-Number(input.min))/(Number(input.max)-Number(input.min))*100}%`);
-    $(id+'-value').textContent=id==='speed'?`${Number(value.toFixed(2))}×`:value<.5?'Light':value>1?'Full':'Medium';
+    $(id+'-value').textContent=id==='speed'?`${Number(value.toFixed(2))}×`:id==='clock-size'?`${Math.round(value*100)}%`:value<.5?'Light':value>1?'Full':'Medium';
   }
+  // Clock: hours over minutes, as on the car lockscreen. Its spot is the clock's centre as a share of the stage, so it
+  // keeps its place in and out of fullscreen; its size follows the stage, times the scale (0.5-3, as on the car).
+  const clock=$('clock');
+  let clockText='';
+  function updateClock() {
+    const now=new Date(),hours=String(now.getHours()).padStart(2,'0'),minutes=String(now.getMinutes()).padStart(2,'0');
+    if(hours+minutes===clockText)return;
+    clockText=hours+minutes;$('clock-hours').textContent=hours;$('clock-minutes').textContent=minutes;
+    clock.setAttribute('aria-label',`The time is ${hours}:${minutes}`);
+  }
+  function sizeClock() {
+    const w=stage.clientWidth,h=stage.clientHeight;
+    clock.style.fontSize=`${Math.min(Math.min(w*.2,h*.18)*state.clock.scale,h*.55,w*.8)}px`;
+  }
+  // Shown inside the stage even where the saved spot would put part of it outside (after leaving fullscreen); that nudge isn't saved.
+  function placeClock() {
+    if(!state.clock.on)return;
+    const w=stage.clientWidth,h=stage.clientHeight,cw=clock.offsetWidth,ch=clock.offsetHeight;
+    const left=clamp(state.clock.x*w-cw/2,Math.min(0,w-cw),Math.max(0,w-cw)),top=clamp(state.clock.y*h-ch/2,Math.min(0,h-ch),Math.max(0,h-ch));
+    clock.style.transform=`translate(${Math.round(left)}px,${Math.round(top)}px)`;
+  }
+  function layoutClock(){sizeClock();placeClock();}
+  function keepClockInside() {
+    const halfW=Math.min(clock.offsetWidth/stage.clientWidth,1)/2,halfH=Math.min(clock.offsetHeight/stage.clientHeight,1)/2;
+    state.clock.x=clamp(state.clock.x,halfW,1-halfW);state.clock.y=clamp(state.clock.y,halfH,1-halfH);
+  }
+  function setClockScale(scale) {
+    state.clock.scale=clamp(scale,.5,3);updateSlider('clock-size',state.clock.scale);layoutClock();
+  }
+  function setClock(on,notify=true) {
+    state.clock.on=on;clock.hidden=!on;
+    $('clock-toggle').setAttribute('aria-checked',String(on));$('immersive-clock').setAttribute('aria-pressed',String(on));
+    $('clock-size').disabled=!on;document.querySelector('.clock-control').classList.toggle('off',!on);
+    if(on){updateClock();layoutClock();}
+    save();if(notify)announce(on?'Clock shown':'Clock hidden');
+  }
+  // One finger (or the mouse) moves the clock; two fingers move and resize it. The second finger may land beside the clock.
+  const clockPointers=new Map();
+  let clockGesture=null;
+  const midpoint=points=>({x:points.reduce((sum,p)=>sum+p.x,0)/points.length,y:points.reduce((sum,p)=>sum+p.y,0)/points.length});
+  const spread=points=>points.length>1?Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y):0;
+  function startClockGesture() {
+    const points=[...clockPointers.values()],center=midpoint(points);
+    clockGesture={x:state.clock.x,y:state.clock.y,scale:state.clock.scale,cx:center.x,cy:center.y,spread:spread(points)};
+  }
+  function addClockPointer(event) {
+    if(clockPointers.size>=2)return;
+    clock.setPointerCapture(event.pointerId);
+    clockPointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+    clock.classList.add('dragging');startClockGesture();
+  }
+  function endClockPointer(event) {
+    if(!clockPointers.delete(event.pointerId))return;
+    if(clockPointers.size)return startClockGesture();
+    clockGesture=null;clock.classList.remove('dragging');save();
+  }
+  clock.addEventListener('pointerdown',event=>{if(event.button>0)return;event.preventDefault();addClockPointer(event);});
+  stage.addEventListener('pointerdown',event=>{if(clockPointers.size&&event.pointerType==='touch'&&event.target===$('main-canvas'))addClockPointer(event);});
+  clock.addEventListener('pointermove',event=>{
+    if(!clockGesture||!clockPointers.has(event.pointerId))return;
+    clockPointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+    const points=[...clockPointers.values()],center=midpoint(points);
+    if(clockGesture.spread)setClockScale(clockGesture.scale*spread(points)/clockGesture.spread);
+    state.clock.x=clockGesture.x+(center.x-clockGesture.cx)/stage.clientWidth;
+    state.clock.y=clockGesture.y+(center.y-clockGesture.cy)/stage.clientHeight;
+    keepClockInside();placeClock();
+  });
+  for(const type of ['pointerup','pointercancel','lostpointercapture'])clock.addEventListener(type,endClockPointer);
+  stage.addEventListener('touchmove',event=>{if(clockPointers.size)event.preventDefault();},{passive:false});
+  clock.addEventListener('wheel',event=>{
+    event.preventDefault();
+    const pixels=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?stage.clientHeight:1);
+    setClockScale(state.clock.scale*Math.exp(-pixels*(event.ctrlKey?.01:.0015)));save();
+  },{passive:false});
+  new ResizeObserver(layoutClock).observe(stage);
+  new ResizeObserver(placeClock).observe(clock);
+  setInterval(()=>{if(state.clock.on)updateClock();},1000);
   document.querySelectorAll('[data-scene]').forEach(button=>button.addEventListener('click',()=>selectScene(button.dataset.scene)));
   document.querySelectorAll('[data-theme]').forEach(button=>button.addEventListener('click',()=>selectTheme(button.dataset.theme)));
   $('fullscreen-background').addEventListener('change',event=>selectTheme(event.target.value));
   for(const id of ['speed','density']) $(id).addEventListener('input',event=>{state[id]=Number(event.target.value);updateSlider(id,state[id]);dirty=true;save();});
+  $('clock-size').addEventListener('input',event=>{setClockScale(Number(event.target.value));save();});
+  $('clock-toggle').addEventListener('click',()=>setClock(!state.clock.on));$('immersive-clock').addEventListener('click',()=>setClock(!state.clock.on));
   $('pause-button').addEventListener('click',togglePause);$('immersive-pause').addEventListener('click',togglePause);
   const changeScene=direction=>selectScene(keys[(keys.indexOf(state.scene)+direction+keys.length)%keys.length]);
   $('previous-scene').addEventListener('click',()=>changeScene(-1));$('next-scene').addEventListener('click',()=>changeScene(1));
@@ -254,14 +341,15 @@
     if(event.altKey||event.ctrlKey||event.metaKey||isFormControl||exitDialog.open)return;
     if(['1','2','3','4'].includes(event.key)){event.preventDefault();selectScene(keys[Number(event.key)-1]);}
     if(event.key.toLowerCase()==='f'){event.preventDefault();isImmersive()?requestExit():enterFullscreen();}
+    if(event.key.toLowerCase()==='c'){event.preventDefault();setClock(!state.clock.on);}
     if(event.code==='Space'&&event.target.tagName!=='BUTTON'){event.preventDefault();togglePause();}
     if(event.key==='ArrowRight'){event.preventDefault();changeScene(1);}
     if(event.key==='ArrowLeft'){event.preventDefault();changeScene(-1);}
     if(event.key==='Escape'&&isImmersive()){event.preventDefault();requestExit();}
     showHud();
   });
-  document.addEventListener('visibilitychange',()=>{lastTime=0;dirty=true;});
-  selectScene(state.scene,false);selectTheme(state.theme);updateSlider('speed',state.speed);updateSlider('density',state.density);
+  document.addEventListener('visibilitychange',()=>{lastTime=0;dirty=true;if(state.clock.on)updateClock();});
+  selectScene(state.scene,false);selectTheme(state.theme);updateSlider('speed',state.speed);updateSlider('density',state.density);updateSlider('clock-size',state.clock.scale);setClock(state.clock.on,false);
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)togglePause();
   requestAnimationFrame(frame);
 })();

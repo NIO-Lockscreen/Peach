@@ -8,7 +8,7 @@
 @media(prefers-reduced-motion:reduce){.live-dot{animation:none}.scene-card,.primary-button,.stage-hud{transition:none}}
 
 /* Named backdrops stay available in the collection and in fullscreen. */
-.control-bar{display:grid;grid-template-columns:minmax(300px,1fr) minmax(130px,190px) minmax(130px,190px) auto;gap:23px}
+.control-bar{display:grid;grid-template-columns:minmax(max-content,1fr) minmax(90px,170px) minmax(90px,170px) minmax(150px,230px) auto;gap:23px}
 .background-control{gap:12px}
 .background-options{display:flex;gap:3px;align-items:center}
 .background-option{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 9px;border-radius:6px;background:transparent;border:1px solid transparent;color:#8c8173;font-size:10px;white-space:nowrap;transition:background .2s,border-color .2s}
@@ -37,7 +37,29 @@
 .confirm-exit-button{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #e5d2bd;color:#8e6449;background:#f5e9d9}
 .confirm-exit-button:hover{background:#eedcc8}
 .confirm-exit-button svg{width:13px;height:13px}
-@media(max-width:1100px){.control-bar{grid-template-columns:minmax(290px,1fr) minmax(110px,150px) minmax(110px,150px) auto;gap:18px}.background-control{gap:8px}.background-option{padding:7px 6px;font-size:9px}}
-@media(max-width:920px){.control-bar{grid-template-columns:1fr 1fr auto;gap:14px 22px}.background-control{grid-column:1/-1;padding-bottom:12px;border-bottom:1px solid #e9e2d8;gap:15px}.background-option{font-size:10px;padding:8px 13px}.slider-control{min-width:0}.pause-button{padding-left:15px}}
-@media(max-width:620px){.control-bar{grid-template-columns:1fr 1fr auto;gap:12px 10px}.background-control{display:block;order:0;padding-bottom:13px}.background-control>.control-label{display:block;margin-bottom:10px}.background-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.background-option{padding:8px 5px;font-size:9px;gap:6px}.background-dot{width:11px;height:11px}.slider-control{order:1;border:0;padding:0;gap:7px}.density-control{padding-left:0}.pause-button{order:1;grid-column:3;padding:6px 0;min-width:45px;font-size:9px;gap:5px}.slider-control label{font-size:9px}.immersive-controls{max-width:calc(100vw - 20px)}.immersive-controls>span:not(.immersive-divider){min-width:0;max-width:90px;font-size:10px;padding:0 4px;overflow:hidden;text-overflow:ellipsis}.immersive-controls>button{width:30px;height:32px;flex-shrink:0}.immersive-background select{font-size:10px;padding-left:5px;max-width:95px}.immersive-divider{margin:0 3px}}
+@media(max-width:1100px){.control-bar{grid-template-columns:minmax(max-content,1fr) minmax(90px,150px) minmax(90px,150px) minmax(140px,200px) auto;gap:18px}.background-control{gap:8px}.background-option{padding:7px 6px;font-size:9px}}
+@media(max-width:1250px){.control-bar{grid-template-columns:1fr 1fr 1.25fr auto;gap:14px 22px}.background-control{grid-column:1/-1;padding-bottom:12px;border-bottom:1px solid #e9e2d8;gap:15px}.background-option{font-size:10px;padding:8px 13px}.slider-control{min-width:0}.pause-button{padding-left:15px}}
+@media(max-width:620px){.control-bar{grid-template-columns:1fr 1fr auto;gap:12px 10px}.background-control{display:block;order:0;padding-bottom:13px}.background-control>.control-label{display:block;margin-bottom:10px}.background-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.background-option{padding:8px 5px;font-size:9px;gap:6px}.background-dot{width:11px;height:11px}.slider-control{order:1;border:0;padding:0;gap:7px}.density-control{padding-left:0}.pause-button{order:1;grid-column:3;padding:6px 0;min-width:45px;font-size:9px;gap:5px}.slider-control label{font-size:9px}.immersive-controls{max-width:calc(100vw - 20px)}.immersive-controls>span:not(.immersive-divider){min-width:0;max-width:90px;font-size:10px;padding:0 4px;overflow:hidden;text-overflow:ellipsis}.immersive-controls>button{width:30px;height:32px;flex-shrink:0}.immersive-background select{font-size:10px;padding-left:5px;max-width:95px}.immersive-divider{margin:0 3px}.clock-control{order:2;grid-column:1/-1;padding-top:12px;border-top:1px solid #e9e2d8}.clock-switch{font-size:9px}}
 @media(max-width:480px){.immersive-controls #immersive-name{display:none}.exit-dialog{padding:28px 21px 21px}.exit-dialog h2{font-size:27px}}
+
+/* Clock from the car lockscreen: hours over minutes, drag to move, pinch, scroll or slide to resize. */
+@font-face{font-family:'Oswald';font-style:normal;font-weight:700;font-display:swap;src:url('./fonts/oswald-700.woff2') format('woff2')}
+.clock{position:absolute;top:0;left:0;display:flex;flex-direction:column;align-items:center;padding:0 .06em;font-family:'Oswald',Impact,'Arial Narrow',sans-serif;font-weight:700;font-variant-numeric:tabular-nums;color:#fff;filter:drop-shadow(0 0 20px rgba(0,0,0,.5));user-select:none;-webkit-user-select:none;cursor:grab;touch-action:none}
+.clock[hidden]{display:none}
+.clock>span{line-height:.8;pointer-events:none}
+.clock>span+span{margin-top:-.125em}
+.clock.dragging{cursor:grabbing;will-change:transform}
+.stage.light .clock{color:#4a3a30;filter:drop-shadow(0 0 10px rgba(255,255,255,.3))}
+.stage.idle .clock{cursor:none}
+.clock-control{gap:10px}
+.clock-switch{display:flex;align-items:center;gap:8px;padding:4px 0;background:transparent;font-size:11px;color:#7f7a70;white-space:nowrap}
+.clock-switch:hover{color:#ad5c3d}
+.switch-track{position:relative;flex-shrink:0;width:26px;height:15px;border-radius:15px;background:#e2d9cc;transition:background .2s}
+.switch-knob{position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 1px 2px #3a281a33;transition:transform .2s}
+.clock-switch[aria-checked="true"] .switch-track{background:#b57c59}
+.clock-switch[aria-checked="true"] .switch-knob{transform:translateX(11px)}
+.clock-control.off input,.clock-control.off output{opacity:.4}
+.clock-control.off input{cursor:default}
+#immersive-clock[aria-pressed="false"]{color:#9a998f}
+#immersive-clock[aria-pressed="true"]{color:#f3c19f}
+@media(prefers-reduced-motion:reduce){.switch-track,.switch-knob{transition:none}}
